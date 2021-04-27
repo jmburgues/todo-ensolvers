@@ -1,9 +1,11 @@
 package com.ensolvers.todo.ToDo.service;
 
 import com.ensolvers.todo.ToDo.model.Folder;
+import com.ensolvers.todo.ToDo.model.PostResponse;
 import com.ensolvers.todo.ToDo.model.Task;
 import com.ensolvers.todo.ToDo.repository.FolderRepository;
 import com.ensolvers.todo.ToDo.repository.TaskRepository;
+import com.ensolvers.todo.ToDo.utils.EntityUrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.List;
 @Service
 public class TaskService {
 
+    private static final String TASK_PATH = "task";
     private TaskRepository taskRepo;
     private FolderRepository folderRepo;
 
@@ -37,8 +40,13 @@ public class TaskService {
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task id: " + idTask + " doest not exists."));
     }
 
-    public void add(Task newTask){
-        this.taskRepo.save(newTask);
+    public PostResponse add(Task newTask){
+        Task saved = this.taskRepo.save(newTask);
+        return PostResponse
+                .builder()
+                .status(HttpStatus.CREATED)
+                .url(EntityUrlBuilder.buildURL(TASK_PATH,saved.getId().toString()))
+                .build();
     }
 
     public void delete(Integer idTask){
@@ -47,22 +55,13 @@ public class TaskService {
         this.taskRepo.deleteById(idTask);
     }
 
-    public void update(Task toEdit){
+    public PostResponse update(Task toEdit){
         this.getById(toEdit.getId());
-        this.taskRepo.save(toEdit);
-
-    }
-
-    public void addToFolder(Integer idTask, Integer idFolder){
-        Folder folder = this.folderRepo.findById(idFolder)
-                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
-        Task task = this.getById(idTask);
-        if(folder.getTasks().contains(task)){
-            throw new ResponseStatusException(HttpStatus.ALREADY_REPORTED,"Task id: " + idTask + " already exists in Folder id: " + idFolder);
-        }
-        else{
-            folder.getTasks().add(task);
-            this.folderRepo.save(folder);
-        }
+        Task updated = this.taskRepo.save(toEdit);
+        return PostResponse
+                .builder()
+                .status(HttpStatus.CREATED)
+                .url(EntityUrlBuilder.buildURL(TASK_PATH,updated.getId().toString()))
+                .build();
     }
 }

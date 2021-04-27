@@ -1,8 +1,11 @@
 package com.ensolvers.todo.ToDo.service;
 
 import com.ensolvers.todo.ToDo.model.Folder;
+import com.ensolvers.todo.ToDo.model.PostResponse;
 import com.ensolvers.todo.ToDo.model.Task;
 import com.ensolvers.todo.ToDo.repository.FolderRepository;
+import com.ensolvers.todo.ToDo.repository.TaskRepository;
+import com.ensolvers.todo.ToDo.utils.EntityUrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,8 +16,16 @@ import java.util.List;
 
 @Service
 public class FolderService {
-    @Autowired
+
+    private static final String TASK_PATH = "folder";
+    private TaskRepository taskRepo;
     private FolderRepository folderRepo;
+
+    @Autowired
+    public FolderService(TaskRepository taskRepo, FolderRepository folderRepo) {
+        this.taskRepo = taskRepo;
+        this.folderRepo = folderRepo;
+    }
 
     public List<Folder> getAll(){
         List<Folder> all = this.folderRepo.findAll();
@@ -43,5 +54,23 @@ public class FolderService {
         Folder toDelete = this.folderRepo.findById(idFolder)
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Folder id: " + idFolder + "does not exists."));
         this.folderRepo.deleteById(idFolder);
+    }
+
+    public PostResponse addToList(Integer idFolder, Integer idTask){
+        Task task = this.taskRepo.findById(idTask)
+                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+        Folder folder = this.getById(idFolder);
+        if(folder.getTasks().contains(task)){
+            throw new ResponseStatusException(HttpStatus.ALREADY_REPORTED,"Task id: " + idTask + " already exists in Folder id: " + idFolder);
+        }
+        else{
+            folder.getTasks().add(task);
+            Folder updated = this.folderRepo.save(folder);
+            return PostResponse
+                    .builder()
+                    .status(HttpStatus.CREATED)
+                    .url(EntityUrlBuilder.buildURL(TASK_PATH,updated.getId().toString()))
+                    .build();
+        }
     }
 }

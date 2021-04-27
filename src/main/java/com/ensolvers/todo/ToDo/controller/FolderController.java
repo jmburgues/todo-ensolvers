@@ -1,6 +1,7 @@
 package com.ensolvers.todo.ToDo.controller;
 
 import com.ensolvers.todo.ToDo.model.Folder;
+import com.ensolvers.todo.ToDo.model.PostResponse;
 import com.ensolvers.todo.ToDo.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -39,4 +40,8 @@ public class FolderController {
         this.folderService.update(toUpdate);
     }
 
+    @PutMapping("{idFolder}/task/{idTask}")
+    public PostResponse addToFolder(@PathVariable Integer idFolder, @PathVariable Integer idTask){
+        return this.folderService.addToList(idFolder,idTask);
+    }
 }

@@ -1,5 +1,6 @@
 package com.ensolvers.todo.ToDo.controller;
 
+import com.ensolvers.todo.ToDo.model.PostResponse;
 import com.ensolvers.todo.ToDo.model.Task;
 import com.ensolvers.todo.ToDo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,8 @@ public class TaskController {
     }
 
     @PostMapping
-    public void add(@RequestBody Task newTask){
-        this.taskService.add(newTask);
+    public PostResponse add(@RequestBody Task newTask){
+        return this.taskService.add(newTask);
     }
 
     @DeleteMapping("{idTask}")
@@ -35,12 +36,7 @@ public class TaskController {
     }
 
     @PutMapping
-    public void update(@RequestBody Task toUpdate){
-        this.taskService.update(toUpdate);
-    }
-
-    @PutMapping("{idTask}/folder/{idFolder}")
-    public void addToFolder(@PathVariable Integer idTask, @PathVariable Integer idFolder){
-        this.taskService.addToFolder(idTask,idFolder);
+    public PostResponse update(@RequestBody Task toUpdate){
+        return this.taskService.update(toUpdate);
     }
 }
