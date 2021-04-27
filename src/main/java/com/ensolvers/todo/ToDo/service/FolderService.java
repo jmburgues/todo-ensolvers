@@ -1,6 +1,7 @@
 package com.ensolvers.todo.ToDo.service;
 
 import com.ensolvers.todo.ToDo.model.Folder;
+import com.ensolvers.todo.ToDo.model.Task;
 import com.ensolvers.todo.ToDo.repository.FolderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,12 @@ public class FolderService {
 
     public void add(Folder newFolder){
         this.folderRepo.save(newFolder);
+    }
+
+    public void update(Folder toEdit){
+        this.getById(toEdit.getId());
+        this.folderRepo.save(toEdit);
+
     }
 
     public void delete(Integer idFolder){
