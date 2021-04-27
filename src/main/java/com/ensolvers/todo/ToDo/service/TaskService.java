@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -26,14 +27,14 @@ public class TaskService {
     public List<Task> getAll(){
         List<Task> all = this.taskRepo.findAll();
         if(all.isEmpty()){
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"There are no tasks created.");
         }
         return all;
     }
 
     public Task getById(Integer idTask){
         return this.taskRepo.findById(idTask)
-                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task id: " + idTask + " doest not exists."));
     }
 
     public void add(Task newTask){
@@ -42,7 +43,7 @@ public class TaskService {
 
     public void delete(Integer idTask){
         Task toDelete = this.taskRepo.findById(idTask)
-                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task id: " + idTask + " doest not exists."));
         this.taskRepo.deleteById(idTask);
     }
 
@@ -57,7 +58,7 @@ public class TaskService {
                 .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
         Task task = this.getById(idTask);
         if(folder.getTasks().contains(task)){
-            throw new HttpClientErrorException(HttpStatus.ALREADY_REPORTED);
+            throw new ResponseStatusException(HttpStatus.ALREADY_REPORTED,"Task id: " + idTask + " already exists in Folder id: " + idFolder);
         }
         else{
             folder.getTasks().add(task);

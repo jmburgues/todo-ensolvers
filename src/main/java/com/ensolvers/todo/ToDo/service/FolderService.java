@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -18,14 +19,14 @@ public class FolderService {
     public List<Folder> getAll(){
         List<Folder> all = this.folderRepo.findAll();
         if(all.isEmpty()){
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"There are no Folders created.");
         }
         return all;
     }
 
     public Folder getById(Integer idFolder){
         return this.folderRepo.findById(idFolder)
-                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Folder id: " + idFolder + "does not exists."));
     }
 
     public void add(Folder newFolder){
@@ -40,7 +41,7 @@ public class FolderService {
 
     public void delete(Integer idFolder){
         Folder toDelete = this.folderRepo.findById(idFolder)
-                .orElseThrow( () -> new HttpClientErrorException(HttpStatus.NOT_FOUND));
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Folder id: " + idFolder + "does not exists."));
         this.folderRepo.deleteById(idFolder);
     }
 }
