@@ -78,7 +78,7 @@ public class FolderService {
             return PostResponse
                     .builder()
                     .status(HttpStatus.CREATED)
-                    .url(EntityUrlBuilder.buildURL(FOLDER_PATH+"/"+updated.getId().toString()+"/task/"+task.getId().toString()))
+                    .url(EntityUrlBuilder.buildURL(FOLDER_PATH,updated.getId().toString()))
                     .build();
         }
     }
