@@ -27,7 +27,7 @@ public class FolderController {
 
     @PostMapping
     public PostResponse add(@RequestBody Folder newFolder){
-        this.folderService.add(newFolder);
+        return this.folderService.add(newFolder);
     }
 
     @DeleteMapping("{idFolder}")
@@ -37,7 +37,7 @@ public class FolderController {
 
     @PutMapping
     public PostResponse update(@RequestBody Folder toUpdate){
-        this.folderService.update(toUpdate);
+        return this.folderService.update(toUpdate);
     }
 
     @PutMapping("{idFolder}/task/{idTask}")
