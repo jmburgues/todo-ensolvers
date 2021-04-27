@@ -11,4 +11,12 @@ public class EntityUrlBuilder {
                 .buildAndExpand(entity,id)
                 .toUriString();
     }
+
+    public static String buildURL(String path){
+        return ServletUriComponentsBuilder
+                .fromCurrentContextPath()
+                .path(("{path}"))
+                .buildAndExpand(path)
+                .toUriString();
+    }
 }

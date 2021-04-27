@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 public class FolderService {
 
-    private static final String TASK_PATH = "folder";
+    private static final String FOLDER_PATH = "folder";
     private TaskRepository taskRepo;
     private FolderRepository folderRepo;
 
@@ -40,14 +40,23 @@ public class FolderService {
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Folder id: " + idFolder + "does not exists."));
     }
 
-    public void add(Folder newFolder){
-        this.folderRepo.save(newFolder);
+    public PostResponse add(Folder newFolder){
+        Folder saved = this.folderRepo.save(newFolder);
+        return PostResponse
+                .builder()
+                .status(HttpStatus.CREATED)
+                .url(EntityUrlBuilder.buildURL(FOLDER_PATH,saved.getId().toString()))
+                .build();
     }
 
-    public void update(Folder toEdit){
+    public PostResponse update(Folder toEdit){
         this.getById(toEdit.getId());
-        this.folderRepo.save(toEdit);
-
+        Folder edited = this.folderRepo.save(toEdit);
+        return PostResponse
+                .builder()
+                .status(HttpStatus.CREATED)
+                .url(EntityUrlBuilder.buildURL(FOLDER_PATH,edited.getId().toString()))
+                .build();
     }
 
     public void delete(Integer idFolder){
@@ -69,7 +78,7 @@ public class FolderService {
             return PostResponse
                     .builder()
                     .status(HttpStatus.CREATED)
-                    .url(EntityUrlBuilder.buildURL(TASK_PATH,updated.getId().toString()))
+                    .url(EntityUrlBuilder.buildURL(FOLDER_PATH+"/"+updated.getId().toString()+"/task/"+task.getId().toString()))
                     .build();
         }
     }

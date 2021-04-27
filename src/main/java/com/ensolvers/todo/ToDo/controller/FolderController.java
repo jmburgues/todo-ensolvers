@@ -26,7 +26,7 @@ public class FolderController {
     }
 
     @PostMapping
-    public void add(@RequestBody Folder newFolder){
+    public PostResponse add(@RequestBody Folder newFolder){
         this.folderService.add(newFolder);
     }
 
@@ -36,7 +36,7 @@ public class FolderController {
     }
 
     @PutMapping
-    public void update(@RequestBody Folder toUpdate){
+    public PostResponse update(@RequestBody Folder toUpdate){
         this.folderService.update(toUpdate);
     }
 
